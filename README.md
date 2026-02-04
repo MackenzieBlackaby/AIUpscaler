@@ -12,4 +12,6 @@
 
 ## Default Models
 
+### SuperResolution
+
 ## Extensibility
