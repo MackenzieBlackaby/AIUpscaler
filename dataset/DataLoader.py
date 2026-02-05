@@ -4,12 +4,13 @@ from random import randint
 from torch.utils.data import Dataset
 import torchvision.transforms.functional as TF
 from torch import Tensor
-from dataclasses import dataclass
 
-@dataclass
+
 class ImagePair:
-    lowRes: Tensor
-    highRes: Tensor
+    def __init__(self, lowRes: Tensor, highRes: Tensor):
+        self.lowRes = lowRes
+        self.highRes = highRes
+
 
 class ImageSet(Dataset):
     def __init__(self, rootDir: str, scale: int = 2, hrCrop: int = 192):
