@@ -80,6 +80,6 @@ def run_test(
 if __name__ == "__main__":
     run_test(
         ckpt_path="sr_last.pt",
-        input_path="testinput.webp",  # change this
+        input_path="/testimages/cctv.jpg",  # change this
         scale=4,  # must match training
     )
