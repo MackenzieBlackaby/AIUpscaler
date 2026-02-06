@@ -15,12 +15,12 @@ def extractPairs(batch: list[ImagePair]):
 
 def main():
     trainImageDir = DownloadData()
-    scale = 2
+    scale = 4
     hrCrop = 192
 
     batchSize = 16
-    epochs = 10
-    lr = 1e-4
+    epochs = 20
+    lr = 1e-5
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
 
@@ -76,7 +76,7 @@ def main():
 
     for epoch in range(1, epochs + 1):
         model.train()
-        loss = 0.0
+        runningLoss = 0.0
         for step, (lrImgs, hrImgs) in enumerate(trainLoader, start=1):
             lrImgs = lrImgs.to(device, non_blocking=True)
             hrImgs = hrImgs.to(device, non_blocking=True)
@@ -87,11 +87,11 @@ def main():
             loss.backward()
             optimiser.step()
 
-            loss += loss.item()
+            runningLoss += loss.item()
 
             if step % 100 == 0:
-                print(f"Epoch {epoch} | step {step} | train L1: {running_loss/100:.5f}")
-                running_loss = 0.0
+                print(f"Epoch {epoch} | step {step} | train L1: {runningLoss/100:.5f}")
+                runningLoss = 0.0
 
         model.eval()
         val_loss = 0.0
