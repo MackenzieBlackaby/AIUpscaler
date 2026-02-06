@@ -1,7 +1,4 @@
 *.pt
 */__pycache__/
 *.pyc
-*.webp
-*.png
-*.jpg
-*.jpeg
+/testimages/
