@@ -17,10 +17,11 @@ def main():
     trainImageDir = DownloadData()
     scale = 4
     hrCrop = 192
-
+    blockCount = 12
+    features = 64
     batchSize = 16
-    epochs = 20
-    lr = 1e-5
+    epochs = 10
+    lr = 1e-3
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
 
@@ -50,29 +51,10 @@ def main():
         collate_fn=extractPairs,
     )
 
-    model = SupResNet(scale=scale).to(device)
+    model = SupResNet(scale=scale, blockCount=blockCount, features=features).to(device)
 
     lossfn = nn.L1Loss()
     optimiser = torch.optim.Adam(model.parameters(), lr=lr)
-
-    # ? Sanity check
-    # ---
-    lrImgs, hrImgs = next(iter(trainLoader))
-    print(
-        "LR batch:",
-        lrImgs.shape,
-        lrImgs.dtype,
-        float(lrImgs.min()),
-        float(lrImgs.max()),
-    )
-    print(
-        "HR batch:",
-        hrImgs.shape,
-        hrImgs.dtype,
-        float(hrImgs.min()),
-        float(hrImgs.max()),
-    )
-    # ---
 
     for epoch in range(1, epochs + 1):
         model.train()
