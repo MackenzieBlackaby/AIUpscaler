@@ -3,3 +3,6 @@
 *.pyc
 /testimages/
 upscaler.py
+upscalerHi.py
+upscalerLowRes.py
+PyscaleGUI.py
