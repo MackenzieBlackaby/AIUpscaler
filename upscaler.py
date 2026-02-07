@@ -7,7 +7,7 @@ from models.py.SuperResolution import SupResNet
 
 
 def load_model(ckpt_path: str, scale: int, device: torch.device):
-    model = SupResNet(scale=scale).to(device)
+    model = SupResNet(scale=scale, blockCount=12, features=64).to(device)
     ckpt = torch.load(ckpt_path, map_location=device)
     model.load_state_dict(ckpt["model"])
     model.eval()
@@ -29,7 +29,7 @@ def simulate_lr_pil(hr_img: Image.Image, scale: int) -> Image.Image:
 def run_test(
     ckpt_path: str,
     input_path: str,
-    scale: int = 2,
+    scale: int = 4,
 ):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Device:", device)
@@ -80,6 +80,6 @@ def run_test(
 if __name__ == "__main__":
     run_test(
         ckpt_path="sr_last.pt",
-        input_path="/testimages/cctv.jpg",  # change this
+        input_path="testimages/knight.png",  # change this
         scale=4,  # must match training
     )
