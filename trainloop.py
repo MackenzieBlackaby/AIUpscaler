@@ -20,8 +20,8 @@ def main():
     blockCount = 12
     features = 64
     batchSize = 16
-    epochs = 10
-    lr = 1e-3
+    epochs = 20
+    lr = 1e-4
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
 
