@@ -20,6 +20,17 @@ optimumLr = {
     8: 1e-4,
     16: 1e-4,
 }
+trainedScales = [2, 3, 4]
+
+
+def getDevice() -> torch.device:
+    """
+    Gets the current device being used.
+
+    :return: Device being used
+    :rtype: device
+    """
+    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def loadModel(scale: int, features: int, blockCount: int, lr: float) -> SupResNet:
@@ -37,8 +48,11 @@ def loadModel(scale: int, features: int, blockCount: int, lr: float) -> SupResNe
     :return: The trained SupResNet model with specified configuration
     :rtype: SupResNet
     """
+    # TODO: Add checking that scale is in a list of trained configurations. If not, repeatedly scale the image to achieve desired scaling
     model = SupResNet(scale=scale, blockCount=blockCount, features=features)
-    ckpt = torch.load(ConstructPath(scale, features, blockCount, lr))
+    ckpt = torch.load(
+        ConstructPath(scale, features, blockCount, lr), map_location=getDevice()
+    )
     model.load_state_dict(ckpt["model"])
     model.eval()
     return model
@@ -73,7 +87,10 @@ def upscaleImage(image: Image.Image, scale: int, model: SupResNet) -> Image.Imag
     :return: The final upscaled image
     :rtype: Image.Image
     """
-    raise NotImplemented
+    imageTensor = TF.to_tensor(image).unsqueeze(0).to(getDevice())
+    upscaledTensor = model(imageTensor).clamp(0.0, 1.0).cpu().squeeze(0)
+    upscaledImage = TF.to_pil_image(upscaledTensor)
+    return upscaledImage
 
 
 def upscaleImage(imagePath: str, scale: int, model: SupResNet) -> Image.Image:
