@@ -1,17 +1,7 @@
 import torch
-import torchvision.transforms.functional as TF
 from PIL import Image
 import matplotlib.pyplot as plt
-
-from models.py.SuperResolution import SupResNet
-
-
-def load_model(ckpt_path: str, scale: int, device: torch.device):
-    model = SupResNet(scale=scale, blockCount=12, features=64).to(device)
-    ckpt = torch.load(ckpt_path, map_location=device)
-    model.load_state_dict(ckpt["model"])
-    model.eval()
-    return model
+from api import scaler
 
 
 def simulate_lr_pil(hr_img: Image.Image, scale: int) -> Image.Image:
@@ -27,15 +17,10 @@ def simulate_lr_pil(hr_img: Image.Image, scale: int) -> Image.Image:
 
 @torch.no_grad()
 def run_test(
-    ckpt_path: str,
     input_path: str,
     scale: int = 4,
 ):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Device:", device)
-
-    # 1) Load model
-    model = load_model(ckpt_path, scale=scale, device=device)
+    print("Upscaling starting...")
 
     # 2) Load HR image
     hr_pil = Image.open(input_path).convert("RGB")
@@ -46,14 +31,7 @@ def run_test(
     # For fair visual comparison, upsample the LR back to HR size (bicubic)
     lr_up_pil = lr_pil.resize(hr_pil.size, resample=Image.BICUBIC)
 
-    # 4) PIL -> tensor in [0,1], shape [1,C,H,W]
-    lr_tensor = TF.to_tensor(lr_pil).unsqueeze(0).to(device)
-
-    # 5) Forward pass -> SR tensor [1,C,H,W] in roughly [0,1]
-    sr_tensor = model(lr_tensor).clamp(0.0, 1.0).cpu().squeeze(0)
-
-    # 6) Convert SR tensor to PIL for display
-    sr_pil = TF.to_pil_image(sr_tensor)
+    sr_pil = scaler.upscaleImage(lr_pil, scale)
 
     # 7) Plot comparison
     plt.figure(figsize=(12, 4))
@@ -79,7 +57,6 @@ def run_test(
 
 if __name__ == "__main__":
     run_test(
-        ckpt_path="sr_last.pt",
-        input_path="testimages/knight.png",  # change this
-        scale=4,  # must match training
+        input_path="ignore/testimages/knight.png",
+        scale=4,
     )
