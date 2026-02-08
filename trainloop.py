@@ -3,9 +3,9 @@ import torch.nn as nn
 from torch.utils.data import DataLoader, random_split
 
 from models.py.SuperResolution import SupResNet
+from models.params.paths import ConstructPath
 from dataset.data import ImageSet, ImagePair
 from dataset.data import DownloadData
-from models.params.paths import ConstructPath
 
 # TODO: Add docstrings and comments to this file
 

@@ -1,6 +1,7 @@
 import torch
-from PIL import Image
+
 from PIL.Image import Resampling
+
 from api import scaler
 from api.utility import simulateLowRes, loadImage
 from api.plots import imageDiagram
