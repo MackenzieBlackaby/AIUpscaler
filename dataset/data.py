@@ -1,5 +1,6 @@
 from pathlib import Path
 from PIL import Image
+from PIL.Image import Resampling
 from random import randint
 from torch.utils.data import Dataset
 import torchvision.transforms.functional as TF
@@ -45,7 +46,9 @@ class ImageSet(Dataset):
         # Size up smaller images
         w, h = img.size
         if w < self.hrCrop or h < self.hrCrop:
-            img = img.resize((max(w, self.hrCrop), max(h, self.hrCrop)), Image.BICUBIC)
+            img = img.resize(
+                (max(w, self.hrCrop), max(h, self.hrCrop)), Resampling.BICUBIC
+            )
 
         # Random Crop
         x = randint(0, w - self.hrCrop)
@@ -53,6 +56,6 @@ class ImageSet(Dataset):
         highRes = img.crop((x, y, x + self.hrCrop, y + self.hrCrop))
 
         lowResSize = self.hrCrop // self.scale
-        lowRes = highRes.resize((lowResSize, lowResSize), Image.BICUBIC)
+        lowRes = highRes.resize((lowResSize, lowResSize), Resampling.BICUBIC)
 
         return ImagePair(TF.to_tensor(lowRes), TF.to_tensor(highRes))
