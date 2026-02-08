@@ -21,10 +21,6 @@ def runTest(
 
     imageDiagram(lowResImage, modelImage, "Low Res", "Model")
 
-    # imageDiagram(
-    #     highResImage, lowResUpscaledImage, "High Res", "Low Res", modelImage, "Model"
-    # )
-
     print("Upscaling complete!")
 
 
