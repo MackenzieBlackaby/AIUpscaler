@@ -7,7 +7,7 @@ from api.utility import simulateLowRes, loadImage
 from api.plots import imageDiagram
 
 
-def run_test(
+def runTest(
     inputPath: str,
     scale: int = 4,
 ):
@@ -31,7 +31,7 @@ def run_test(
 
 
 if __name__ == "__main__":
-    run_test(
+    runTest(
         inputPath="images/knight.png",
         scale=4,
     )
