@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader, random_split
 from models.py.SuperResolution import SupResNet
 from dataset.ImageSet import ImageSet, ImagePair
 from dataset.DataDownloader import DownloadData
-from models.params.parameters import ConstructPath
+from models.params.paths import ConstructPath
 
 
 def extractPairs(batch: list[ImagePair]):
