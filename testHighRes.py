@@ -1,5 +1,3 @@
-import torch
-
 from PIL.Image import Resampling
 
 from api import scaler
