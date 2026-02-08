@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from typing import Optional
+
 
 @dataclass
 class ModelInfo:
@@ -25,7 +27,7 @@ class ModelInfo:
 
 
 def ConstructPath(
-    scale: int, features: int, blockCount: int, lr: float, epoch: int
+    scale: int, features: int, blockCount: int, lr: float, epoch: Optional[int] = None
 ) -> str:
     """
     Constructs a path, given data about a model configuration, to its specific checkpoint file relative to the current folder
@@ -43,25 +45,7 @@ def ConstructPath(
     :return: A constructed relative path to the model checkpoint file
     :rtype: str
     """
-    return f"models/params/{scale}_{features}_{blockCount}_{lr}_{epoch}.pt"
-
-
-def ConstructPath(scale: int, features: int, blockCount: int, lr: float) -> str:
-    """
-    Constructs a path, given data about a model configuration, to its specific final checkpoint file relative to the current folder
-
-    :param scale: The upscaling factor
-    :type scale: int
-    :param features: The feature count of the model (micro complexity)
-    :type features: int
-    :param blockCount: The block count of the model (macro complexity)
-    :type blockCount: int
-    :param lr: The learning rate of the model
-    :type lr: float
-    :return: A constructed relative path to the model checkpoint file
-    :rtype: str
-    """
-    return f"models/params/{scale}_{features}_{blockCount}_{lr}.pt"
+    return f"models/params/configs/{scale}_{features}_{blockCount}_{lr}{"" if not epoch else "_" + str(epoch)}.pt"
 
 
 def ParsePath(name: str) -> ModelInfo:
