@@ -1,9 +1,9 @@
 import torch
 from PIL import Image
 from PIL.Image import Resampling
-import matplotlib.pyplot as plt
 from api import scaler
-from api.utility import simulateLowRes
+from api.utility import simulateLowRes, loadImage
+from api.plots import imageDiagram
 
 
 @torch.no_grad()
@@ -13,36 +13,21 @@ def run_test(
 ):
     print("Upscaling starting...")
 
-    # 2) Load HR image
-    highResImage = Image.open(inputPath).convert("RGB")
+    highResImage = loadImage(inputPath)
 
-    # 3) Simulate LR input
     lowResImage, lowResUpscaledImage = simulateLowRes(
         highResImage, scale, Resampling.NEAREST
     )
 
     modelImage = scaler.upscaleImage(lowResImage, scale)
 
-    # 7) Plot comparison
-    plt.figure(figsize=(12, 4))
+    imageDiagram(lowResImage, modelImage, "Low Res", "Model")
 
-    plt.subplot(1, 3, 1)
-    plt.title("Original (HR)")
-    plt.imshow(highResImage)
-    plt.axis("off")
+    # imageDiagram(
+    #     highResImage, lowResUpscaledImage, "High Res", "Low Res", modelImage, "Model"
+    # )
 
-    plt.subplot(1, 3, 2)
-    plt.title(f"Simulated LR (↓{scale} then ↑ bicubic)")
-    plt.imshow(lowResUpscaledImage)
-    plt.axis("off")
-
-    plt.subplot(1, 3, 3)
-    plt.title("Super-Res (Model Output)")
-    plt.imshow(modelImage)
-    plt.axis("off")
-
-    plt.tight_layout()
-    plt.show()
+    print("Upscaling complete!")
 
 
 if __name__ == "__main__":
