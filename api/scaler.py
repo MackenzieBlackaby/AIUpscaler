@@ -1,6 +1,7 @@
 import torch
 import torchvision.transforms.functional as TF
 from PIL import Image
+from typing import Optional, Union
 
 from models.py.SuperResolution import SupResNet
 from models.params.paths import ConstructPath
@@ -33,9 +34,17 @@ def getDevice() -> torch.device:
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
-def loadModel(scale: int, features: int, blockCount: int, lr: float) -> SupResNet:
+def loadModel(
+    scale: int,
+    features: Optional[int] = None,
+    blockCount: Optional[int] = None,
+    lr: Optional[float] = None,
+) -> SupResNet:
     """
     Loads a model and the checkpoint given the data about the model.
+
+    If features, blockCount, and lr are not provided, the pre-determined optimum configuration
+    for the given scale factor is used (from the hyperparameter search on Flickr2K).
 
     :param scale: The upscaling factor
     :type scale: int
@@ -49,6 +58,12 @@ def loadModel(scale: int, features: int, blockCount: int, lr: float) -> SupResNe
     :rtype: SupResNet
     """
     # TODO: Add checking that scale is in a list of trained configurations. If not, repeatedly scale the image to achieve desired scaling
+
+    if features is None or blockCount is None or lr is None:
+        features = optimumFeatures[scale]
+        blockCount = optimumBlockCount[scale]
+        lr = optimumLr[scale]
+
     model = SupResNet(scale=scale, blockCount=blockCount, features=features)
     ckpt = torch.load(
         ConstructPath(scale, features, blockCount, lr), map_location=getDevice()
@@ -58,28 +73,19 @@ def loadModel(scale: int, features: int, blockCount: int, lr: float) -> SupResNe
     return model
 
 
-def loadModel(scale: int) -> SupResNet:
-    """
-    Loads a model given a pre-determined optimum configuration for the given scale factor
-    This is the simplest and easiest way to load a model for this upscaler.
-    These optimum configurations were pre-determined by a hyperparameter search on the Flickr2K dataset.
-
-    :param scale: The upscaling factor
-    :type scale: int
-    :return: The trained SupResNet model with the optimum configuration
-    :rtype: SupResNet
-    """
-    return loadModel(
-        scale, optimumFeatures[scale], optimumBlockCount[scale], optimumLr[scale]
-    )
-
-
-def upscaleImage(image: Image.Image, scale: int, model: SupResNet) -> Image.Image:
+def upscaleImage(
+    image: Union[Image.Image, str],
+    scale: int,
+    model: Optional[SupResNet] = None,
+) -> Image.Image:
     """
     Upscales an image to the desired scale factor using Super Resolution upscaling.
 
-    :param image: The image to upscale.
-    :type image: Image.Image
+    If `image` is a string, it is treated as a path to an image.
+    If `model` is not provided, the optimum model for the given scale factor is loaded automatically.
+
+    :param image: The image to upscale, or a path to the image.
+    :type image: Image.Image | str
     :param scale: The scale factor
     :type scale: int
     :param model: The model to be used for upscaling
@@ -87,57 +93,13 @@ def upscaleImage(image: Image.Image, scale: int, model: SupResNet) -> Image.Imag
     :return: The final upscaled image
     :rtype: Image.Image
     """
+    if isinstance(image, str):
+        image = Image.open(image).convert("RGB")
+
+    if model is None:
+        model = loadModel(scale)
+
     imageTensor = TF.to_tensor(image).unsqueeze(0).to(getDevice())
     upscaledTensor = model(imageTensor).clamp(0.0, 1.0).cpu().squeeze(0)
     upscaledImage = TF.to_pil_image(upscaledTensor)
     return upscaledImage
-
-
-def upscaleImage(imagePath: str, scale: int, model: SupResNet) -> Image.Image:
-    """
-    Upscales an image located at a specified path to the desired scale factor using Super Resolution upscaling.
-
-    :param imagePath: The path to the image to upscale
-    :type imagePath: str
-    :param scale: The scale factor
-    :type scale: int
-    :param model: The model to be used for upscaling
-    :type model: SupResNet
-    :return: The final upscaled image
-    :rtype: Image.Image
-    """
-    image = Image.open(imagePath).convert("RGB")
-    return upscaleImage(image, scale, model)
-
-
-def upscaleImage(image: Image.Image, scale: int) -> Image.Image:
-    """
-    The simplest way to upscale an image.
-    Automatically loads the optimum model for a given scale factor, then upscales the image.
-
-
-    :param image: The image to upscale
-    :type image: Image.Image
-    :param scale: The scale factor
-    :type scale: int
-    :return: The final upscaled image
-    :rtype: Image
-    """
-    model = loadModel(scale)
-    return upscaleImage(image, scale, model)
-
-
-def upscaleImage(imagePath: str, scale: int) -> Image.Image:
-    """
-    The simplest way to upscale an image given a path.
-    Automatically loads the optimum model for a given scale factor, then upscales the image located at the specified path.
-
-    :param imagePath: The path to the image to upscale
-    :type imagePath: str
-    :param scale: The scale factor
-    :type scale: int
-    :return: The final upscaled image
-    :rtype: Image
-    """
-    model = loadModel(scale)
-    return upscaleImage(imagePath, scale, model)
