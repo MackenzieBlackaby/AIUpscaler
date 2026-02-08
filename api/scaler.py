@@ -28,5 +28,34 @@ def loadModel(scale: int, features: int, blockCount: int, lr: float) -> SupResNe
     return model
 
 
-def upscaleImage():
-    pass
+def upscaleImage(image: Image.Image, scale: int, model: SupResNet) -> Image.Image:
+    """
+    Upscales an image to the desired scale factor using Super Resolution upscaling.
+
+    :param image: The image to upscale.
+    :type image: Image.Image
+    :param scale: The scale factor
+    :type scale: int
+    :param model: The model to be used for upscaling
+    :type model: SupResNet
+    :return: The final upscaled image
+    :rtype: Image.Image
+    """
+    raise NotImplemented
+
+
+def upscaleImage(imagePath: str, scale: int, model: SupResNet) -> Image.Image:
+    """
+    Upscales an image located at a specified path to the desired scale factor using Super Resolution upscaling.
+
+    :param imagePath: The path to the image to upscale
+    :type imagePath: str
+    :param scale: The scale factor
+    :type scale: int
+    :param model: The model to be used for upscaling
+    :type model: SupResNet
+    :return: The final upscaled image
+    :rtype: Image.Image
+    """
+    image = Image.open(imagePath).convert("RGB")
+    return upscaleImage(image, scale, model)
