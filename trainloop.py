@@ -5,6 +5,7 @@ from torch.utils.data import DataLoader, random_split
 from models.py.SuperResolution import SupResNet
 from dataset.ImageSet import ImageSet, ImagePair
 from dataset.DataDownloader import DownloadData
+from models.params.parameters import ConstructPath
 
 
 def extractPairs(batch: list[ImagePair]):
@@ -98,7 +99,7 @@ def main():
                 "model": model.state_dict(),
                 "optim": optimiser.state_dict(),
             },
-            f=f"models/params/{scale}x_{features}f_{blockCount}b_{lr}lr_{epoch}epochs.pt",
+            f=ConstructPath(scale, features, blockCount, lr, epoch),
         )
 
 
