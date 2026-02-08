@@ -7,7 +7,6 @@ from api.utility import simulateLowRes, loadImage
 from api.plots import imageDiagram
 
 
-@torch.no_grad()
 def run_test(
     inputPath: str,
     scale: int = 4,

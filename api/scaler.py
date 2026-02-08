@@ -73,7 +73,7 @@ def loadModel(
     model.eval()
     return model
 
-
+@torch.no_grad()
 def upscaleImage(
     image: Union[Image.Image, str],
     scale: int,
