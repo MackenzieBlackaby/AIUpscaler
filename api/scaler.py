@@ -5,6 +5,22 @@ from PIL import Image
 from models.py.SuperResolution import SupResNet
 from models.params.paths import ConstructPath
 
+optimumFeatures = {
+    4: 64,
+    8: 64,
+    16: 64,
+}
+optimumBlockCount = {
+    4: 12,
+    8: 12,
+    16: 12,
+}
+optimumLr = {
+    4: 1e-4,
+    8: 1e-4,
+    16: 1e-4,
+}
+
 
 def loadModel(scale: int, features: int, blockCount: int, lr: float) -> SupResNet:
     """
@@ -26,6 +42,22 @@ def loadModel(scale: int, features: int, blockCount: int, lr: float) -> SupResNe
     model.load_state_dict(ckpt["model"])
     model.eval()
     return model
+
+
+def loadModel(scale: int) -> SupResNet:
+    """
+    Loads a model given a pre-determined optimum configuration for the given scale factor
+    This is the simplest and easiest way to load a model for this upscaler.
+    These optimum configurations were pre-determined by a hyperparameter search on the Flickr2K dataset.
+
+    :param scale: The upscaling factor
+    :type scale: int
+    :return: The trained SupResNet model with the optimum configuration
+    :rtype: SupResNet
+    """
+    return loadModel(
+        scale, optimumFeatures[scale], optimumBlockCount[scale], optimumLr[scale]
+    )
 
 
 def upscaleImage(image: Image.Image, scale: int, model: SupResNet) -> Image.Image:
