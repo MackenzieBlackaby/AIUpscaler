@@ -30,3 +30,15 @@ def simulateLowRes(
     )
     lowResUpscaledImage = lowResImage.resize((width, height), resample=upscalingStyle)
     return (lowResImage, lowResUpscaledImage)
+
+
+def loadImage(path: str) -> Image.Image:
+    """
+    Loads an image from a path as a PIL image type
+
+    :param path: The path to the image
+    :type path: str
+    :return: The image as a PIL image
+    :rtype: Image.Image
+    """
+    return Image.open(path).convert("RGB")
