@@ -98,7 +98,7 @@ def main():
                 "model": model.state_dict(),
                 "optim": optimiser.state_dict(),
             },
-            "sr_last.pt",
+            f=f"models/params/{scale}x_{features}f_{blockCount}b_{lr}lr_{epoch}epochs.pt",
         )
 
 
