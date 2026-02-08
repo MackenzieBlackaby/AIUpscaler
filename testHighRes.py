@@ -33,6 +33,6 @@ def run_test(
 
 if __name__ == "__main__":
     run_test(
-        inputPath="ignore/testimages/knight.png",
+        inputPath=".ignore/testimages/knight.png",
         scale=4,
     )
