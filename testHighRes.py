@@ -18,7 +18,7 @@ def run_test(
 
     # 3) Simulate LR input
     lowResImage, lowResUpscaledImage = simulateLowRes(
-        highResImage, scale, Resampling.BICUBIC
+        highResImage, scale, Resampling.NEAREST
     )
 
     modelImage = scaler.upscaleImage(lowResImage, scale)
