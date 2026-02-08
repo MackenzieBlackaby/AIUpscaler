@@ -4,13 +4,13 @@ from torch.utils.data import DataLoader, random_split
 
 from models.py.SuperResolution import SupResNet
 from models.params.paths import ConstructPath
-from dataset.data import ImageSet, ImagePair
+from dataset.data import TrainingData, TrainingDataImage
 from dataset.data import DownloadData
 
 # TODO: Add docstrings and comments to this file
 
 
-def extractPairs(batch: list[ImagePair]):
+def extractPairs(batch: list[TrainingDataImage]):
     lr = torch.stack([pair.lowRes for pair in batch])
     hr = torch.stack([pair.highRes for pair in batch])
     return lr, hr
@@ -28,7 +28,7 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
 
-    dataset = ImageSet(trainImageDir, scale, hrCrop)
+    dataset = TrainingData(trainImageDir, scale, hrCrop)
 
     validationPercentage = 0.05
     validationLength = max(1, int(len(dataset) * validationPercentage))
