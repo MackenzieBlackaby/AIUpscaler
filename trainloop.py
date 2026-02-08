@@ -7,6 +7,8 @@ from dataset.ImageSet import ImageSet, ImagePair
 from dataset.DataDownloader import DownloadData
 from models.params.paths import ConstructPath
 
+# TODO: Add docstrings and comments to this file
+
 
 def extractPairs(batch: list[ImagePair]):
     lr = torch.stack([pair.lowRes for pair in batch])
