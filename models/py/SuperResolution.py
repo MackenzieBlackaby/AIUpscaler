@@ -1,15 +1,18 @@
 import torch.nn as nn
 
 """
-
-This file is a model of a CNN used to upscale images using AI
-We build this neural network out of a single repeating convolutional block that calculates the residual
-This allows us to customise the power of the network through a single integer on the fly.
+This file is the main Super Resolution CNN model
+It is built of a single repeating convolutional block that calculates the residual
+This modularity allows for on-the-fly customisation of the network's precision
 
 """
 
 
 class ResidualBlock(nn.Module):
+    """
+    A single convolutional residual block for building the core of the neural network.
+    """
+
     def __init__(self, channelCount: int):
         super().__init__()
 
@@ -24,6 +27,10 @@ class ResidualBlock(nn.Module):
 
 
 class UpsampleBlock(nn.Module):
+    """
+    A single block for upsampling the image.
+    """
+
     def __init__(self, features: int, scale: int):
         super().__init__()
         self.block = nn.Sequential(
@@ -37,6 +44,10 @@ class UpsampleBlock(nn.Module):
 
 
 class SupResNet(nn.Module):
+    """
+    This is the main Super Resolution neural network module
+    """
+
     def __init__(
         self, scale: int = 2, channels: int = 3, features: int = 64, blockCount: int = 8
     ):
