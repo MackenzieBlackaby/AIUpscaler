@@ -91,3 +91,36 @@ def upscaleImage(imagePath: str, scale: int, model: SupResNet) -> Image.Image:
     """
     image = Image.open(imagePath).convert("RGB")
     return upscaleImage(image, scale, model)
+
+
+def upscaleImage(image: Image.Image, scale: int) -> Image.Image:
+    """
+    The simplest way to upscale an image.
+    Automatically loads the optimum model for a given scale factor, then upscales the image.
+
+
+    :param image: The image to upscale
+    :type image: Image.Image
+    :param scale: The scale factor
+    :type scale: int
+    :return: The final upscaled image
+    :rtype: Image
+    """
+    model = loadModel(scale)
+    return upscaleImage(image, scale, model)
+
+
+def upscaleImage(imagePath: str, scale: int) -> Image.Image:
+    """
+    The simplest way to upscale an image given a path.
+    Automatically loads the optimum model for a given scale factor, then upscales the image located at the specified path.
+
+    :param imagePath: The path to the image to upscale
+    :type imagePath: str
+    :param scale: The scale factor
+    :type scale: int
+    :return: The final upscaled image
+    :rtype: Image
+    """
+    model = loadModel(scale)
+    return upscaleImage(imagePath, scale, model)
